@@ -5,9 +5,10 @@ import { TaskList } from "@/components/task-list"
 import { UpcomingDeadlines } from "@/components/upcoming-deadlines"
 import { ProjectProgress } from "@/components/project-progress"
 import { TaskDetailsDialog } from "@/components/task-details-dialog"
-import { LoginDialog, SignUpDialog } from "@/components/auth-dialogs"
+import { LoginDialog } from "@/components/auth-dialogs"
 import { Button } from "@/components/ui/button"
 import { LogIn, UserPlus } from "lucide-react"
+import { SignUpDialog } from "@/components/signup-dialog"
 
 export function Dashboard() {
   const [taskDetailsOpen, setTaskDetailsOpen] = useState(false)
@@ -24,9 +25,7 @@ export function Dashboard() {
       <div className="flex-1 overflow-auto p-6">
         {/* Overview */}
         <section className="mb-6">
-          <h2 className="mb-4 text-lg font-semibold text-foreground">
-            Обзор
-          </h2>
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Обзор</h2>
           <OverviewCards />
         </section>
 
@@ -46,18 +45,18 @@ export function Dashboard() {
       </div>
 
       {/* Auth buttons (floating) */}
-      <div className="fixed bottom-6 right-6 flex gap-2 z-50">
+      <div className="fixed right-6 bottom-6 z-50 flex gap-2">
         <Button
           onClick={() => setLoginOpen(true)}
           variant="outline"
-          className="rounded-full shadow-lg bg-card border-border/50 gap-2 hover:border-primary/50"
+          className="gap-2 rounded-full border-border/50 bg-card shadow-lg hover:border-primary/50"
         >
           <LogIn className="h-4 w-4" />
           Войти
         </Button>
         <Button
           onClick={() => setSignUpOpen(true)}
-          className="rounded-full shadow-lg gap-2"
+          className="gap-2 rounded-full shadow-lg"
         >
           <UserPlus className="h-4 w-4" />
           Регистрация

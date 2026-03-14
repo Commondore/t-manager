@@ -16,10 +16,10 @@ interface AuthDialogProps {
   onSwitchToSignUp?: () => void
 }
 
-export function LoginDialog({
+export function SignUpDialog({
   open,
   onOpenChange,
-  onSwitchToSignUp,
+  onSwitchToLogin,
 }: AuthDialogProps) {
   const onRegister = async () => {
     console.log("Регистрация...")
@@ -35,23 +35,33 @@ export function LoginDialog({
       console.error("Ошибка при регистрации:", error)
     }
   }
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="overflow-hidden rounded-2xl border-border/50 p-0 sm:max-w-sm">
         <DialogHeader className="px-6 pt-6 pb-0">
           <DialogTitle className="text-center text-2xl font-bold">
-            Вход
+            Регистрация
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 px-6 pt-4 pb-6">
           <div className="space-y-2">
-            <Label htmlFor="login-email" className="text-sm font-medium">
+            <Label htmlFor="signup-name" className="text-sm font-medium">
+              Полное имя
+            </Label>
+            <Input
+              id="signup-name"
+              placeholder="Иван Иванов"
+              className="h-10 rounded-xl"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="signup-email" className="text-sm font-medium">
               Эл. почта
             </Label>
             <Input
-              id="login-email"
+              id="signup-email"
               type="email"
               placeholder="name@example.com"
               className="h-10 rounded-xl"
@@ -59,13 +69,13 @@ export function LoginDialog({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="login-password" className="text-sm font-medium">
+            <Label htmlFor="signup-password" className="text-sm font-medium">
               Пароль
             </Label>
             <Input
-              id="login-password"
+              id="signup-password"
               type="password"
-              placeholder="Введите пароль"
+              placeholder="Придумайте пароль"
               className="h-10 rounded-xl"
             />
           </div>
@@ -74,26 +84,21 @@ export function LoginDialog({
             onClick={onRegister}
             className="h-11 w-full rounded-xl bg-primary text-sm font-semibold hover:bg-primary/90"
           >
-            Войти
+            Зарегистрироваться
           </Button>
 
-          <div className="space-y-1 text-center">
-            <p className="text-sm text-muted-foreground">
-              Нет аккаунта?{" "}
-              <button
-                onClick={() => {
-                  onOpenChange(false)
-                  onSwitchToSignUp?.()
-                }}
-                className="font-semibold text-primary hover:underline"
-              >
-                Регистрация
-              </button>
-            </p>
-            <button className="text-xs text-primary hover:underline">
-              Забыли пароль?
+          <p className="text-center text-sm text-muted-foreground">
+            Уже есть аккаунт?{" "}
+            <button
+              onClick={() => {
+                onOpenChange(false)
+                onSwitchToLogin?.()
+              }}
+              className="font-semibold text-primary hover:underline"
+            >
+              Войти
             </button>
-          </div>
+          </p>
         </div>
       </DialogContent>
     </Dialog>
