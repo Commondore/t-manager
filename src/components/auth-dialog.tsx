@@ -56,10 +56,7 @@ export function LoginDialog({
             />
           </div>
 
-          <Button
-            onClick={onRegister}
-            className="h-11 w-full rounded-xl bg-primary text-sm font-semibold hover:bg-primary/90"
-          >
+          <Button className="h-11 w-full rounded-xl bg-primary text-sm font-semibold hover:bg-primary/90">
             Войти
           </Button>
 
