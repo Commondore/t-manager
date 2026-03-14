@@ -30,8 +30,8 @@ const navItems = [
 export function AppSidebar() {
   return (
     <Sidebar collapsible="icon" variant="floating">
-      <SidebarHeader className="p-4">
-        <div className="flex items-center gap-3">
+      <SidebarHeader className="p-4 group-data-[collapsible=icon]:p-2">
+        <div className="flex items-center gap-3 group-data-[collapsible=icon]:justify-center">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-white/20">
             <ListTodo className="h-5 w-5 text-white" />
           </div>
@@ -41,7 +41,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2">
+      <SidebarContent className="px-2 group-data-[collapsible=icon]:px-1">
         <SidebarGroup>
           <SidebarMenu>
             {navItems.map((item) => (
@@ -49,10 +49,12 @@ export function AppSidebar() {
                 <SidebarMenuButton
                   isActive={item.active}
                   tooltip={item.label}
-                  className="h-10 gap-3 rounded-lg px-3 text-sm font-medium text-white/80 transition-all hover:bg-white/15 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white"
+                  className="h-10 gap-3 rounded-lg px-3 text-sm font-medium text-white/80 transition-all hover:bg-white/15 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:px-0"
                 >
                   <item.icon className="h-5 w-5" />
-                  <span>{item.label}</span>
+                  <span className="group-data-[collapsible=icon]:hidden">
+                    {item.label}
+                  </span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
@@ -60,9 +62,9 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-1">
         <Button
-          className="w-full gap-2 rounded-xl bg-white/20 text-white shadow-none backdrop-blur-sm hover:bg-white/30 group-data-[collapsible=icon]:p-2"
+          className="w-full gap-2 rounded-xl bg-white/20 text-white shadow-none backdrop-blur-sm hover:bg-white/30 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-9 group-data-[collapsible=icon]:aspect-square group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0"
         >
           <Plus className="h-5 w-5" />
           <span className="group-data-[collapsible=icon]:hidden">Добавить задачу</span>
