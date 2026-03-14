@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { register } from "@/config/api"
 import { useState } from "react"
+import type { IUser } from "@/types/auth"
 
 interface AuthDialogProps {
   open: boolean
+  onSuccess: (user: IUser) => void
   onOpenChange: (open: boolean) => void
   onSwitchToLogin?: () => void
   onSwitchToSignUp?: () => void
@@ -19,6 +21,7 @@ interface AuthDialogProps {
 
 export function SignUpDialog({
   open,
+  onSuccess,
   onOpenChange,
   onSwitchToLogin,
 }: AuthDialogProps) {
@@ -40,8 +43,9 @@ export function SignUpDialog({
     setIsSubmiting(true)
     await new Promise((resolve) => setTimeout(resolve, 2000)) // Имитируем задержку для демонстрации состояния загрузки
     try {
-      const response = await register(userData)
-      console.log("Регистрация успешна:", response)
+      const user = await register(userData)
+      onSuccess(user)
+      console.log("Регистрация успешна:", user)
       onOpenChange(false)
     } catch (error) {
       console.error("Ошибка при регистрации:", error)

@@ -1,11 +1,14 @@
 import Layout from "@/app/layout"
 import { Dashboard } from "@/components/dashboard"
+import { AuthProvider } from "@/context/auth-context"
 
 export function App() {
   return (
-    <Layout>
-      <Dashboard />
-    </Layout>
+    <AuthProvider>
+      <Layout>
+        <Dashboard />
+      </Layout>
+    </AuthProvider>
   )
 }
 

@@ -9,11 +9,23 @@ import { LoginDialog } from "@/components/auth-dialog"
 import { Button } from "@/components/ui/button"
 import { LogIn, UserPlus } from "lucide-react"
 import { SignUpDialog } from "@/components/signup-dialog"
+import { useUser } from "@/context/auth-context"
+import { logout } from "@/config/api"
 
 export function Dashboard() {
   const [taskDetailsOpen, setTaskDetailsOpen] = useState(false)
   const [loginOpen, setLoginOpen] = useState(false)
   const [signUpOpen, setSignUpOpen] = useState(false)
+  const { user, onAuth } = useUser()
+
+  const onLogout = async () => {
+    try {
+      await logout()
+      onAuth(null)
+    } catch (e) {
+      console.log("Вы успешно вышли")
+    }
+  }
 
   return (
     <div className="flex min-h-screen flex-1 flex-col">
@@ -44,23 +56,30 @@ export function Dashboard() {
         </div>
       </div>
 
-      {/* Auth buttons (floating) */}
       <div className="fixed right-6 bottom-6 z-50 flex gap-2">
-        <Button
-          onClick={() => setLoginOpen(true)}
-          variant="outline"
-          className="gap-2 rounded-full border-border/50 bg-card shadow-lg hover:border-primary/50"
-        >
-          <LogIn className="h-4 w-4" />
-          Войти
-        </Button>
-        <Button
-          onClick={() => setSignUpOpen(true)}
-          className="gap-2 rounded-full shadow-lg"
-        >
-          <UserPlus className="h-4 w-4" />
-          Регистрация
-        </Button>
+        {!user ? (
+          <>
+            <Button
+              onClick={() => setLoginOpen(true)}
+              variant="outline"
+              className="gap-2 rounded-full border-border/50 bg-card shadow-lg hover:border-primary/50"
+            >
+              <LogIn className="h-4 w-4" />
+              Войти
+            </Button>
+            <Button
+              onClick={() => setSignUpOpen(true)}
+              className="gap-2 rounded-full shadow-lg"
+            >
+              <UserPlus className="h-4 w-4" />
+              Регистрация
+            </Button>
+          </>
+        ) : (
+          <Button onClick={onLogout} className="gap-2 rounded-full shadow-lg">
+            Выйти
+          </Button>
+        )}
       </div>
 
       {/* Dialogs */}
@@ -72,11 +91,13 @@ export function Dashboard() {
         open={loginOpen}
         onOpenChange={setLoginOpen}
         onSwitchToSignUp={() => setSignUpOpen(true)}
+        onSuccess={onAuth}
       />
       <SignUpDialog
         open={signUpOpen}
         onOpenChange={setSignUpOpen}
         onSwitchToLogin={() => setLoginOpen(true)}
+        onSuccess={onAuth}
       />
     </div>
   )

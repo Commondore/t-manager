@@ -9,9 +9,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { login } from "@/config/api"
 import { useState } from "react"
+import type { IUser } from "@/types/auth"
 
 interface AuthDialogProps {
   open: boolean
+  onSuccess: (user: IUser) => void
   onOpenChange: (open: boolean) => void
   onSwitchToLogin?: () => void
   onSwitchToSignUp?: () => void
@@ -19,9 +21,37 @@ interface AuthDialogProps {
 
 export function LoginDialog({
   open,
+  onSuccess,
   onOpenChange,
   onSwitchToSignUp,
 }: AuthDialogProps) {
+  const [userData, setUserData] = useState({
+    email: "",
+    password: "",
+  })
+  const [isSubmiting, setIsSubmiting] = useState(false)
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUserData((userData) => ({
+      ...userData,
+      [event.target.name]: event.target.value,
+    }))
+  }
+
+  const onLogin = async () => {
+    setIsSubmiting(true)
+    await new Promise((resolve) => setTimeout(resolve, 2000)) // Имитируем задержку для демонстрации состояния загрузки
+    try {
+      const user = await login(userData)
+      onSuccess(user)
+      console.log("Авторизация успешна:", user)
+      onOpenChange(false)
+    } catch (error) {
+      console.error("Ошибка при регистрации:", error)
+    } finally {
+      setIsSubmiting(false)
+    }
+  }
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="overflow-hidden rounded-2xl border-border/50 p-0 sm:max-w-sm">
@@ -39,8 +69,11 @@ export function LoginDialog({
             <Input
               id="login-email"
               type="email"
+              name="email"
               placeholder="name@example.com"
               className="h-10 rounded-xl"
+              onChange={handleInputChange}
+              disabled={isSubmiting}
             />
           </div>
 
@@ -51,12 +84,19 @@ export function LoginDialog({
             <Input
               id="login-password"
               type="password"
+              name="password"
               placeholder="Введите пароль"
               className="h-10 rounded-xl"
+              onChange={handleInputChange}
+              disabled={isSubmiting}
             />
           </div>
 
-          <Button className="h-11 w-full rounded-xl bg-primary text-sm font-semibold hover:bg-primary/90">
+          <Button
+            disabled={isSubmiting}
+            onClick={onLogin}
+            className="h-11 w-full rounded-xl bg-primary text-sm font-semibold hover:bg-primary/90"
+          >
             Войти
           </Button>
 

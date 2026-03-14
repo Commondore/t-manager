@@ -3,3 +3,8 @@ export interface RegisterReq {
   password: string
   name: string
 }
+
+export interface IUser {
+  email: string
+  name: string
+}

@@ -1,4 +1,4 @@
-import type { RegisterReq } from "@/types/auth"
+import type { IUser, RegisterReq } from "@/types/auth"
 import ky from "ky"
 
 const CSRF_ENDPOINT = "auth/csrf"
@@ -80,18 +80,35 @@ export const getCsrfToken = async () => {
   return csrfRequest
 }
 
-export const register = ({ email, password, name }: RegisterReq) => {
-  return api.post("auth/register", {
-    json: {
-      email,
-      password,
-      name,
-    },
-  })
+export const register = ({
+  email,
+  password,
+  name,
+}: RegisterReq): Promise<IUser> => {
+  return api
+    .post("auth/register", {
+      json: {
+        email,
+        password,
+        name,
+      },
+    })
+    .json()
 }
 
-export const login = ({ email, password }: Omit<RegisterReq, "name">) => {
-  return api.post("auth/login", { json: { email, password } })
+export const login = ({
+  email,
+  password,
+}: Omit<RegisterReq, "name">): Promise<IUser> => {
+  return api.post("auth/login", { json: { email, password } }).json()
+}
+
+export const getMe = (): Promise<IUser> => {
+  return api.get("user/me").json()
+}
+
+export const logout = () => {
+  return api.post("auth/logout")
 }
 
 export default api
