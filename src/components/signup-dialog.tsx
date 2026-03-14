@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { register } from "@/config/api"
+import { useState } from "react"
 
 interface AuthDialogProps {
   open: boolean
@@ -21,18 +22,31 @@ export function SignUpDialog({
   onOpenChange,
   onSwitchToLogin,
 }: AuthDialogProps) {
+  const [userData, setUserData] = useState({
+    email: "",
+    password: "",
+    name: "",
+  })
+  const [isSubmiting, setIsSubmiting] = useState(false)
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUserData((userData) => ({
+      ...userData,
+      [event.target.name]: event.target.value,
+    }))
+  }
+
   const onRegister = async () => {
-    console.log("Регистрация...")
+    setIsSubmiting(true)
+    await new Promise((resolve) => setTimeout(resolve, 2000)) // Имитируем задержку для демонстрации состояния загрузки
     try {
-      const response = await register({
-        email: "vasya@gmail.com",
-        password: "12345678",
-        name: "Вася Пупкин",
-      })
+      const response = await register(userData)
       console.log("Регистрация успешна:", response)
       onOpenChange(false)
     } catch (error) {
       console.error("Ошибка при регистрации:", error)
+    } finally {
+      setIsSubmiting(false)
     }
   }
   return (
@@ -51,8 +65,11 @@ export function SignUpDialog({
             </Label>
             <Input
               id="signup-name"
+              name="name"
               placeholder="Иван Иванов"
               className="h-10 rounded-xl"
+              onChange={handleInputChange}
+              disabled={isSubmiting}
             />
           </div>
 
@@ -63,8 +80,11 @@ export function SignUpDialog({
             <Input
               id="signup-email"
               type="email"
+              name="email"
               placeholder="name@example.com"
               className="h-10 rounded-xl"
+              onChange={handleInputChange}
+              disabled={isSubmiting}
             />
           </div>
 
@@ -75,13 +95,17 @@ export function SignUpDialog({
             <Input
               id="signup-password"
               type="password"
+              name="password"
               placeholder="Придумайте пароль"
               className="h-10 rounded-xl"
+              onChange={handleInputChange}
+              disabled={isSubmiting}
             />
           </div>
 
           <Button
             onClick={onRegister}
+            disabled={isSubmiting}
             className="h-11 w-full rounded-xl bg-primary text-sm font-semibold hover:bg-primary/90"
           >
             Зарегистрироваться

@@ -7,7 +7,8 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { register } from "@/config/api"
+import { login } from "@/config/api"
+import { useState } from "react"
 
 interface AuthDialogProps {
   open: boolean
@@ -21,21 +22,6 @@ export function LoginDialog({
   onOpenChange,
   onSwitchToSignUp,
 }: AuthDialogProps) {
-  const onRegister = async () => {
-    console.log("Регистрация...")
-    try {
-      const response = await register({
-        email: "vasya@gmail.com",
-        password: "12345678",
-        name: "Вася Пупкин",
-      })
-      console.log("Регистрация успешна:", response)
-      onOpenChange(false)
-    } catch (error) {
-      console.error("Ошибка при регистрации:", error)
-    }
-  }
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="overflow-hidden rounded-2xl border-border/50 p-0 sm:max-w-sm">

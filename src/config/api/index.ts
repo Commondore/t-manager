@@ -27,7 +27,10 @@ const api = ky.create({
         const method = request.method.toUpperCase()
         const pathname = new URL(request.url).pathname
 
-        if (SAFE_METHODS.has(method) || pathname.endsWith(`/${CSRF_ENDPOINT}`)) {
+        if (
+          SAFE_METHODS.has(method) ||
+          pathname.endsWith(`/${CSRF_ENDPOINT}`)
+        ) {
           return
         }
 
@@ -42,7 +45,8 @@ const api = ky.create({
 })
 
 const resolveCsrfToken = (data: CsrfResponse) => {
-  const token = data.csrfToken ?? data.token ?? data.csrf ?? data.xsrfToken ?? null
+  const token =
+    data.csrfToken ?? data.token ?? data.csrf ?? data.xsrfToken ?? null
   const headerName = data.headerName ?? data.header ?? DEFAULT_CSRF_HEADER
 
   return {
@@ -84,6 +88,10 @@ export const register = ({ email, password, name }: RegisterReq) => {
       name,
     },
   })
+}
+
+export const login = ({ email, password }: Omit<RegisterReq, "name">) => {
+  return api.post("auth/login", { json: { email, password } })
 }
 
 export default api
