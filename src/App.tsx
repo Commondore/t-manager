@@ -1,9 +1,10 @@
 import Layout from "@/app/layout"
+import { Dashboard } from "@/components/dashboard"
 
 export function App() {
   return (
     <Layout>
-      <h1>Test</h1>
+      <Dashboard />
     </Layout>
   )
 }
