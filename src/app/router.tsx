@@ -1,6 +1,7 @@
 import {createBrowserRouter} from 'react-router-dom'
 import Layout from "@/app/layout"
 import { Dashboard } from "@/components/dashboard"
+import { PrivateRouter } from "@/shared/router/private-router"
 
 export const router = createBrowserRouter([
   {
@@ -12,9 +13,19 @@ export const router = createBrowserRouter([
         element: <Dashboard />,
       },
       {
-        path: 'test',
-        element: <h1>Test page</h1>
-      }
+        path: 'test2',
+        element: <h1>Тестовая страница</h1>,
+      },
+      {
+        path: "test",
+        element: <PrivateRouter />,
+        children: [
+          {
+            index: true,
+            element: <h1>Приватная тестовая страница</h1>,
+          },
+        ],
+      },
     ],
   },
 ])

@@ -18,16 +18,18 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
+import { NavLink, useLocation } from "react-router-dom"
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Дашборд", active: true },
-  { icon: ListTodo, label: "Мои задачи", active: false },
-  { icon: FolderKanban, label: "Проекты", active: false },
-  { icon: CalendarDays, label: "Календарь", active: false },
-  { icon: Settings, label: "Настройки", active: false },
+  { icon: LayoutDashboard, label: "Дашборд", active: true, path: '/' },
+  { icon: ListTodo, label: "Мои задачи", active: false, path: "/test" },
+  { icon: FolderKanban, label: "Проекты", active: false, path: "/test2" },
+  { icon: CalendarDays, label: "Календарь", active: false, path: "/test3" },
+  { icon: Settings, label: "Настройки", active: false, path: "/test4" },
 ]
 
 export function AppSidebar() {
+  const {pathname} = useLocation()
   return (
     <Sidebar collapsible="icon" variant="floating">
       <SidebarHeader className="p-4 group-data-[collapsible=icon]:p-2">
@@ -47,14 +49,17 @@ export function AppSidebar() {
             {navItems.map((item) => (
               <SidebarMenuItem key={item.label}>
                 <SidebarMenuButton
-                  isActive={item.active}
+                  isActive={pathname === item.path}
                   tooltip={item.label}
-                  className="h-10 gap-3 rounded-lg px-3 text-sm font-medium text-white/80 transition-all hover:bg-white/15 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:px-0"
+                  asChild
+                  className="h-10 gap-3 rounded-lg px-3 text-sm font-medium text-white/80 transition-all group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-10 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:px-0 hover:bg-white/15 hover:text-white data-[active=true]:bg-white/20 data-[active=true]:text-white"
                 >
-                  <item.icon className="h-5 w-5" />
-                  <span className="group-data-[collapsible=icon]:hidden">
-                    {item.label}
-                  </span>
+                  <NavLink to={item.path}>
+                    <item.icon className="h-5 w-5" />
+                    <span className="group-data-[collapsible=icon]:hidden">
+                      {item.label}
+                    </span>
+                  </NavLink>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
@@ -63,11 +68,11 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-1">
-        <Button
-          className="w-full gap-2 rounded-xl bg-white/20 text-white shadow-none backdrop-blur-sm hover:bg-white/30 group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:size-9 group-data-[collapsible=icon]:aspect-square group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0"
-        >
+        <Button className="w-full gap-2 rounded-xl bg-white/20 text-white shadow-none backdrop-blur-sm group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:aspect-square group-data-[collapsible=icon]:size-9 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0 hover:bg-white/30">
           <Plus className="h-5 w-5" />
-          <span className="group-data-[collapsible=icon]:hidden">Добавить задачу</span>
+          <span className="group-data-[collapsible=icon]:hidden">
+            Добавить задачу
+          </span>
         </Button>
       </SidebarFooter>
 
