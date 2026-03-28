@@ -1,13 +1,12 @@
-import Layout from "@/app/layout"
-import { Dashboard } from "@/components/dashboard"
+
 import { AuthProvider } from "@/context/auth-context"
+import { RouterProvider } from "react-router-dom"
+import { router } from "@/app/router"
 
 export function App() {
   return (
     <AuthProvider>
-      <Layout>
-        <Dashboard />
-      </Layout>
+      <RouterProvider router={router} />
     </AuthProvider>
   )
 }
