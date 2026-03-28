@@ -2,8 +2,16 @@ import type { IUser, RegisterReq } from "@/types/auth"
 import ky from "ky"
 
 const CSRF_ENDPOINT = "auth/csrf"
+const REFRESH_ENDPOINT = "auth/refresh"
 const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"])
 const DEFAULT_CSRF_HEADER = "x-csrf-token"
+const AUTH_REFRESH_EXCLUDE_PATHS = new Set([
+  CSRF_ENDPOINT,
+  REFRESH_ENDPOINT,
+  "auth/login",
+  "auth/register",
+  "auth/logout",
+])
 
 type CsrfResponse = {
   token?: string
@@ -17,6 +25,7 @@ type CsrfResponse = {
 let csrfTokenCache: string | null = null
 let csrfHeaderCache = DEFAULT_CSRF_HEADER
 let csrfRequest: Promise<string | null> | null = null
+let refreshRequest: Promise<void> | null = null
 
 const api = ky.create({
   prefixUrl: import.meta.env.VITE_SERVER_API,
@@ -38,6 +47,27 @@ const api = ky.create({
 
         if (csrfToken) {
           request.headers.set(csrfHeaderCache, csrfToken)
+        }
+      },
+    ],
+    afterResponse: [
+      async (request, _options, response, state) => {
+        const pathname = new URL(request.url).pathname
+        const endpoint = pathname.split("/").filter(Boolean).slice(-2).join("/")
+
+        if (
+          response.status !== 401 ||
+          state.retryCount > 0 ||
+          AUTH_REFRESH_EXCLUDE_PATHS.has(endpoint)
+        ) {
+          return response
+        }
+
+        try {
+          await refreshAccessToken()
+          return ky.retry({ code: "TOKEN_REFRESHED" })
+        } catch {
+          return response
         }
       },
     ],
@@ -78,6 +108,19 @@ export const getCsrfToken = async () => {
   }
 
   return csrfRequest
+}
+
+const refreshAccessToken = async () => {
+  if (!refreshRequest) {
+    refreshRequest = api
+      .post(REFRESH_ENDPOINT)
+      .then(() => undefined)
+      .finally(() => {
+        refreshRequest = null
+      })
+  }
+
+  return refreshRequest
 }
 
 export const register = ({
