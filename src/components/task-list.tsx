@@ -1,6 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Badge } from "@/components/ui/badge"
+import { TaskItems } from "@/components/task-items"
 
 interface Task {
   id: string
@@ -82,19 +83,13 @@ export function TaskList({
         </TabsList>
 
         <TabsContent value="all" className="mt-0">
-          <TaskItems tasks={tasks} onTaskClick={onTaskClick} />
+          <TaskItems tasks={[]} />
         </TabsContent>
         <TabsContent value="active" className="mt-0">
-          <TaskItems
-            tasks={tasks.filter((t) => !t.completed)}
-            onTaskClick={onTaskClick}
-          />
+          <TaskItems tasks={[].filter((t) => !t.completed)} />
         </TabsContent>
         <TabsContent value="completed" className="mt-0">
-          <TaskItems
-            tasks={tasks.filter((t) => t.completed)}
-            onTaskClick={onTaskClick}
-          />
+          <TaskItems tasks={[].filter((t) => t.completed)} />
         </TabsContent>
       </Tabs>
     </div>
