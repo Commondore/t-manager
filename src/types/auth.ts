@@ -7,7 +7,7 @@ export interface RegisterReq {
 }
 
 export interface IUser {
-  id?: number
+  id: number
   email: string
   name: string
   role: Role

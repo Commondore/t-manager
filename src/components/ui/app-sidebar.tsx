@@ -88,7 +88,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-1">
-        {user && <AddTask />}
+        {user && <AddTask userId={user.id} />}
       </SidebarFooter>
 
       <SidebarRail />

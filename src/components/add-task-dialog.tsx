@@ -7,16 +7,23 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { PlusCircle } from "lucide-react"
+import { Loader2, PlusCircle } from "lucide-react"
 import { useState } from "react"
+import { createTask } from "@/config/api"
 
 interface AddTaskDialogProps {
+  userId: number
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export const AddTaskDialog = ({ open, onOpenChange }: AddTaskDialogProps) => {
+export const AddTaskDialog = ({
+  open,
+  onOpenChange,
+  userId,
+}: AddTaskDialogProps) => {
   const [title, setTitle] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
@@ -26,15 +33,26 @@ export const AddTaskDialog = ({ open, onOpenChange }: AddTaskDialogProps) => {
     onOpenChange(nextOpen)
   }
 
-  const handleSubmit = (event: React.SubmitEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.SubmitEvent<HTMLFormElement>) => {
     event.preventDefault()
 
     if (!title.trim()) {
       return
     }
 
-    setTitle("")
-    onOpenChange(false)
+    try {
+      setIsLoading(true)
+      // Имитируем задержку для демонстрации загрузки
+      await new Promise((resolve) => setTimeout(resolve, 2000))
+
+      await createTask({ title, userId })
+      setTitle("")
+      onOpenChange(false)
+    } catch (e) {
+      console.log("Error creating task", e)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -60,6 +78,7 @@ export const AddTaskDialog = ({ open, onOpenChange }: AddTaskDialogProps) => {
               className="h-10 rounded-xl"
               autoComplete="off"
               autoFocus
+              disabled={isLoading}
             />
           </div>
 
@@ -67,6 +86,7 @@ export const AddTaskDialog = ({ open, onOpenChange }: AddTaskDialogProps) => {
             <Button
               type="button"
               variant="outline"
+              disabled={isLoading}
               onClick={() => handleOpenChange(false)}
               className="flex-1 rounded-xl border-border/70"
             >
@@ -74,9 +94,10 @@ export const AddTaskDialog = ({ open, onOpenChange }: AddTaskDialogProps) => {
             </Button>
             <Button
               type="submit"
-              disabled={title.trim().length < 3}
-              className="flex-1 rounded-xl bg-primary hover:bg-primary/90"
+              disabled={title.trim().length < 3 || isLoading}
+              className="flex-1 gap-2 rounded-xl bg-primary hover:bg-primary/90"
             >
+              {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
               Сохранить
             </Button>
           </div>
