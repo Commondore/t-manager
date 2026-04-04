@@ -4,7 +4,6 @@ import {
   FolderKanban,
   CalendarDays,
   Settings,
-  Plus,
   ShieldCheck,
 } from "lucide-react"
 import {
@@ -18,10 +17,10 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
 import { useUser } from "@/context/auth-context"
 import type { Role } from "@/types/auth"
 import { NavLink, useLocation } from "react-router-dom"
+import { AddTask } from "@/components/add-task"
 
 type SidebarNavItem = {
   icon: typeof LayoutDashboard
@@ -89,15 +88,7 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-1">
-        <Button
-          disabled={!user}
-          className="w-full gap-2 rounded-xl bg-white/20 text-white shadow-none backdrop-blur-sm group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:aspect-square group-data-[collapsible=icon]:size-9 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0 hover:bg-white/30 disabled:opacity-50"
-        >
-          <Plus className="h-5 w-5" />
-          <span className="group-data-[collapsible=icon]:hidden">
-            Добавить задачу
-          </span>
-        </Button>
+        {user && <AddTask />}
       </SidebarFooter>
 
       <SidebarRail />
