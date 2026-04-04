@@ -5,6 +5,7 @@ import {
   CalendarDays,
   Settings,
   Plus,
+  ShieldCheck,
 } from "lucide-react"
 import {
   Sidebar,
@@ -18,18 +19,38 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
+import { useUser } from "@/context/auth-context"
+import type { Role } from "@/types/auth"
 import { NavLink, useLocation } from "react-router-dom"
 
-const navItems = [
-  { icon: LayoutDashboard, label: "Дашборд", active: true, path: '/' },
-  { icon: ListTodo, label: "Мои задачи", active: false, path: "/test" },
-  { icon: FolderKanban, label: "Проекты", active: false, path: "/test2" },
-  { icon: CalendarDays, label: "Календарь", active: false, path: "/test3" },
-  { icon: Settings, label: "Настройки", active: false, path: "/test4" },
+type SidebarNavItem = {
+  icon: typeof LayoutDashboard
+  label: string
+  path: string
+  roles?: Role[]
+}
+
+const navItems: SidebarNavItem[] = [
+  { icon: LayoutDashboard, label: "Дашборд", path: "/" },
+  {
+    icon: ListTodo,
+    label: "Мои задачи",
+    path: "/tasks",
+    roles: ["USER", "ADMIN"],
+  },
+  { icon: FolderKanban, label: "Проекты", path: "/projects" },
+  { icon: CalendarDays, label: "Календарь", path: "/calendar" },
+  { icon: Settings, label: "Настройки", path: "/settings" },
+  { icon: ShieldCheck, label: "Админка", path: "/admin", roles: ["ADMIN"] },
 ]
 
 export function AppSidebar() {
-  const {pathname} = useLocation()
+  const { pathname } = useLocation()
+  const { user } = useUser()
+  const visibleNavItems = navItems.filter(
+    (item) => !item.roles || (user && item.roles.includes(user.role))
+  )
+
   return (
     <Sidebar collapsible="icon" variant="floating">
       <SidebarHeader className="p-4 group-data-[collapsible=icon]:p-2">
@@ -46,7 +67,7 @@ export function AppSidebar() {
       <SidebarContent className="px-2 group-data-[collapsible=icon]:px-1">
         <SidebarGroup>
           <SidebarMenu>
-            {navItems.map((item) => (
+            {visibleNavItems.map((item) => (
               <SidebarMenuItem key={item.label}>
                 <SidebarMenuButton
                   isActive={pathname === item.path}
@@ -68,7 +89,10 @@ export function AppSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="p-4 group-data-[collapsible=icon]:p-1">
-        <Button className="w-full gap-2 rounded-xl bg-white/20 text-white shadow-none backdrop-blur-sm group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:aspect-square group-data-[collapsible=icon]:size-9 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0 hover:bg-white/30">
+        <Button
+          disabled={!user}
+          className="w-full gap-2 rounded-xl bg-white/20 text-white shadow-none backdrop-blur-sm group-data-[collapsible=icon]:mx-auto group-data-[collapsible=icon]:aspect-square group-data-[collapsible=icon]:size-9 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:rounded-xl group-data-[collapsible=icon]:p-0 hover:bg-white/30 disabled:opacity-50"
+        >
           <Plus className="h-5 w-5" />
           <span className="group-data-[collapsible=icon]:hidden">
             Добавить задачу

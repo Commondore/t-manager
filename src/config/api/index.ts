@@ -22,6 +22,13 @@ type CsrfResponse = {
   headerName?: string
 }
 
+type ApiUserResponse = {
+  id?: number
+  email: string
+  name: string
+  role?: string | null
+}
+
 let csrfTokenCache: string | null = null
 let csrfHeaderCache = DEFAULT_CSRF_HEADER
 let csrfRequest: Promise<string | null> | null = null
@@ -85,6 +92,13 @@ const resolveCsrfToken = (data: CsrfResponse) => {
   }
 }
 
+const normalizeUser = (user: ApiUserResponse): IUser => ({
+  id: user.id,
+  email: user.email,
+  name: user.name,
+  role: user.role?.toUpperCase() === "ADMIN" ? "ADMIN" : "USER",
+})
+
 export const getCsrfToken = async () => {
   if (csrfTokenCache) {
     return csrfTokenCache
@@ -136,18 +150,30 @@ export const register = ({
         name,
       },
     })
-    .json()
+    .json<ApiUserResponse>()
+    .then(normalizeUser)
 }
 
 export const login = ({
   email,
   password,
 }: Omit<RegisterReq, "name">): Promise<IUser> => {
-  return api.post("auth/login", { json: { email, password } }).json()
+  return api
+    .post("auth/login", { json: { email, password } })
+    .json<ApiUserResponse>()
+    .then(normalizeUser)
 }
 
-export const getMe = (): Promise<IUser> => {
-  return api.get("user/me").json()
+export const getMe = async (): Promise<IUser> => {
+  try {
+    const user = await api.get("auth/me").json<ApiUserResponse>()
+
+    return normalizeUser(user)
+  } catch {
+    const user = await api.get("user/me").json<ApiUserResponse>()
+
+    return normalizeUser(user)
+  }
 }
 
 export const logout = () => {

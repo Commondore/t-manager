@@ -1,3 +1,5 @@
+export type Role = "USER" | "ADMIN"
+
 export interface RegisterReq {
   email: string
   password: string
@@ -5,6 +7,8 @@ export interface RegisterReq {
 }
 
 export interface IUser {
+  id?: number
   email: string
   name: string
+  role: Role
 }

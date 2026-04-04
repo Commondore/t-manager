@@ -21,18 +21,16 @@ export function Dashboard() {
   const onLogout = async () => {
     try {
       await logout()
-      onAuth(null)
     } catch (e) {
-      console.log("Вы успешно вышли")
+      console.error("Не удалось завершить сессию на сервере", e)
+    } finally {
+      onAuth(null)
     }
   }
 
   return (
     <div className="flex min-h-screen flex-1 flex-col">
-      <Header
-        onLoginClick={() => setLoginOpen(true)}
-        onSignUpClick={() => setSignUpOpen(true)}
-      />
+      <Header />
 
       <div className="flex-1 overflow-auto p-6">
         {/* Overview */}

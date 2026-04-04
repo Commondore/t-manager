@@ -1,28 +1,66 @@
-import {createBrowserRouter} from 'react-router-dom'
+import { createBrowserRouter } from "react-router-dom"
+
+import { AdminLayout } from "@/app/admin-layout"
 import Layout from "@/app/layout"
+import { UserLayout } from "@/app/user-layout"
 import { Dashboard } from "@/components/dashboard"
-import { PrivateRouter } from "@/shared/router/private-router"
+import { authLoader } from "@/context/auth-context"
+import { AdminPage } from "@/pages/admin-page"
+import { LoginPage } from "@/pages/login-page"
+import { PrivateRoute } from "@/shared/router/private-route"
+import { RoleGuard } from "@/shared/router/role-guard"
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
+    loader: authLoader,
     children: [
       {
         index: true,
         element: <Dashboard />,
       },
       {
-        path: 'test2',
-        element: <h1>Тестовая страница</h1>,
+        path: "login",
+        element: <LoginPage />,
       },
       {
-        path: "test",
-        element: <PrivateRouter />,
+        path: "projects",
+        element: <h1 className="p-6 text-2xl font-bold">Проекты</h1>,
+      },
+      {
+        path: "calendar",
+        element: <h1 className="p-6 text-2xl font-bold">Календарь</h1>,
+      },
+      {
+        path: "settings",
+        element: <h1 className="p-6 text-2xl font-bold">Настройки</h1>,
+      },
+      {
+        element: <PrivateRoute />,
         children: [
           {
-            index: true,
-            element: <h1>Приватная тестовая страница</h1>,
+            element: <UserLayout />,
+            children: [
+              {
+                path: "tasks",
+                element: <Dashboard />,
+              },
+            ],
+          },
+          {
+            element: <RoleGuard roles={["ADMIN"]} />,
+            children: [
+              {
+                element: <AdminLayout />,
+                children: [
+                  {
+                    path: "admin",
+                    element: <AdminPage />,
+                  },
+                ],
+              },
+            ],
           },
         ],
       },

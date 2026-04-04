@@ -5,12 +5,7 @@ import { Input } from "@/components/ui/input"
 import { useTheme } from "@/components/theme-provider"
 import { SidebarTrigger } from "@/components/ui/sidebar"
 
-interface HeaderProps {
-  onLoginClick?: () => void
-  onSignUpClick?: () => void
-}
-
-export function Header(_props: HeaderProps) {
+export function Header() {
   const { theme, setTheme } = useTheme()
 
   return (
