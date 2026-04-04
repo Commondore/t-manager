@@ -1,4 +1,5 @@
 import type { IUser, RegisterReq } from "@/types/auth"
+import type { ITask, TaskRequest, TaskUpdate } from "@/types/task"
 import ky from "ky"
 
 const CSRF_ENDPOINT = "auth/csrf"
@@ -165,19 +166,47 @@ export const login = ({
 }
 
 export const getMe = async (): Promise<IUser> => {
-  try {
-    const user = await api.get("auth/me").json<ApiUserResponse>()
+  const user = await api.get("user/me").json<ApiUserResponse>()
 
-    return normalizeUser(user)
-  } catch {
-    const user = await api.get("user/me").json<ApiUserResponse>()
-
-    return normalizeUser(user)
-  }
+  return normalizeUser(user)
 }
 
 export const logout = () => {
   return api.post("auth/logout")
+}
+
+export const createTask = ({ title, userId }: TaskRequest): Promise<ITask> => {
+  return api
+    .post("tasks", {
+      json: {
+        title,
+        completed: false,
+        userId,
+      },
+    })
+    .json()
+}
+
+export const getTasks = (): Promise<ITask[]> => {
+  return api.get("tasks").json()
+}
+
+export const updateTask = ({ taskId, data }: TaskUpdate): Promise<ITask> => {
+  return api
+    .patch(`tasks/${taskId}`, {
+      json: {
+        data,
+      },
+    })
+    .json()
+}
+
+export const deleteTask = (taskId: number) => {
+  return api.delete(`tasks/${taskId}`).json()
+}
+
+export const getTaskById = (taskId: number): Promise<ITask> => {
+  return api.get(`tasks/${taskId}`).json()
 }
 
 export default api
