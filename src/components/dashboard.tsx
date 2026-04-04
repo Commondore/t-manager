@@ -11,9 +11,10 @@ import { LogIn, UserPlus } from "lucide-react"
 import { SignUpDialog } from "@/components/signup-dialog"
 import { useUser } from "@/context/auth-context"
 import { logout } from "@/config/api"
+import type { ITask } from "@/types/task"
 
 export function Dashboard() {
-  const [taskDetailsOpen, setTaskDetailsOpen] = useState(false)
+  const [taskDetails, setTaskDetails] = useState<ITask | null>(null)
   const [loginOpen, setLoginOpen] = useState(false)
   const [signUpOpen, setSignUpOpen] = useState(false)
   const { user, onAuth } = useUser()
@@ -43,7 +44,7 @@ export function Dashboard() {
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Left: Task List */}
           <div className="lg:col-span-2">
-            <TaskList onTaskClick={() => setTaskDetailsOpen(true)} />
+            <TaskList onTaskClick={(task) => setTaskDetails(task)} />
           </div>
 
           {/* Right: Widgets */}
@@ -82,8 +83,8 @@ export function Dashboard() {
 
       {/* Dialogs */}
       <TaskDetailsDialog
-        open={taskDetailsOpen}
-        onOpenChange={setTaskDetailsOpen}
+        task={taskDetails}
+        onClose={() => setTaskDetails(null)}
       />
       <LoginDialog
         open={loginOpen}

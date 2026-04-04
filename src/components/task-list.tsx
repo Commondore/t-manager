@@ -1,15 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Badge } from "@/components/ui/badge"
 import { TaskItems } from "@/components/task-items"
-
-interface Task {
-  id: string
-  title: string
-  tags: { label: string; color: string }[]
-  category: string
-  completed: boolean
-}
+import type { ITask } from "@/types/task"
+import { useEffect, useState } from "react"
+import { getTasks } from "@/config/api"
 
 // const tasks: Task[] = [
 //   {
@@ -52,8 +45,23 @@ interface Task {
 export function TaskList({
   onTaskClick,
 }: {
-  onTaskClick?: (task: Task) => void
+  onTaskClick?: (task: ITask) => void
 }) {
+  const [tasks, setTasks] = useState<ITask[]>([])
+
+  const loadTasks = async () => {
+    try {
+      const tasks = await getTasks()
+      setTasks(tasks)
+    } catch (e) {
+      console.log("Error loading tasks", e)
+    }
+  }
+
+  useEffect(() => {
+    loadTasks()
+  }, [])
+
   return (
     <div className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
@@ -83,13 +91,19 @@ export function TaskList({
         </TabsList>
 
         <TabsContent value="all" className="mt-0">
-          <TaskItems tasks={[]} />
+          <TaskItems tasks={tasks} onTaskClick={onTaskClick} />
         </TabsContent>
         <TabsContent value="active" className="mt-0">
-          <TaskItems tasks={[].filter((t) => !t.completed)} />
+          <TaskItems
+            tasks={tasks.filter((t) => !t.completed)}
+            onTaskClick={onTaskClick}
+          />
         </TabsContent>
         <TabsContent value="completed" className="mt-0">
-          <TaskItems tasks={[].filter((t) => t.completed)} />
+          <TaskItems
+            tasks={tasks.filter((t) => t.completed)}
+            onTaskClick={onTaskClick}
+          />
         </TabsContent>
       </Tabs>
     </div>
