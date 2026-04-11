@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Loader2, PlusCircle } from "lucide-react"
 import { useState } from "react"
 import { createTask } from "@/config/api"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 interface AddTaskDialogProps {
   userId: number
@@ -24,6 +25,16 @@ export const AddTaskDialog = ({
 }: AddTaskDialogProps) => {
   const [title, setTitle] = useState("")
   const [isLoading, setIsLoading] = useState(false)
+
+  const queryClient = useQueryClient()
+  const createTaskMutation = useMutation({
+    mutationFn: createTask,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] })
+      setTitle("")
+      onOpenChange(false)
+    }
+  })
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
@@ -44,10 +55,7 @@ export const AddTaskDialog = ({
       setIsLoading(true)
       // Имитируем задержку для демонстрации загрузки
       await new Promise((resolve) => setTimeout(resolve, 2000))
-
-      await createTask({ title, userId })
-      setTitle("")
-      onOpenChange(false)
+      createTaskMutation.mutate({ title, userId })
     } catch (e) {
       console.log("Error creating task", e)
     } finally {
