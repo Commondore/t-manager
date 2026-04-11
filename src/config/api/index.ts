@@ -30,6 +30,11 @@ type ApiUserResponse = {
   role?: string | null
 }
 
+type AuthResponse = {
+  success: boolean
+  user: ApiUserResponse
+}
+
 let csrfTokenCache: string | null = null
 let csrfHeaderCache = DEFAULT_CSRF_HEADER
 let csrfRequest: Promise<string | null> | null = null
@@ -151,8 +156,8 @@ export const register = ({
         name,
       },
     })
-    .json<ApiUserResponse>()
-    .then(normalizeUser)
+    .json<AuthResponse>()
+    .then(({ user }) => normalizeUser(user))
 }
 
 export const login = ({
@@ -161,8 +166,8 @@ export const login = ({
 }: Omit<RegisterReq, "name">): Promise<IUser> => {
   return api
     .post("auth/login", { json: { email, password } })
-    .json<ApiUserResponse>()
-    .then(normalizeUser)
+    .json<AuthResponse>()
+    .then(({ user }) => normalizeUser(user))
 }
 
 export const getMe = async (): Promise<IUser> => {
