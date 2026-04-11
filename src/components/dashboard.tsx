@@ -85,6 +85,7 @@ export function Dashboard() {
       <TaskDetailsDialog
         task={taskDetails}
         onClose={() => setTaskDetails(null)}
+        onTaskUpdated={setTaskDetails}
       />
       <LoginDialog
         open={loginOpen}

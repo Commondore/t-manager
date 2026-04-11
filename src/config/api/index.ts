@@ -94,7 +94,7 @@ const resolveCsrfToken = (data: CsrfResponse) => {
 }
 
 const normalizeUser = (user: ApiUserResponse): IUser => ({
-  id: user.id,
+  id: user.id!,
   email: user.email,
   name: user.name,
   role: user.role?.toUpperCase() === "ADMIN" ? "ADMIN" : "USER",
@@ -194,9 +194,7 @@ export const getTasks = (): Promise<ITask[]> => {
 export const updateTask = ({ taskId, data }: TaskUpdate): Promise<ITask> => {
   return api
     .patch(`tasks/${taskId}`, {
-      json: {
-        data,
-      },
+      json: data,
     })
     .json()
 }
