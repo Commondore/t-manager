@@ -1,8 +1,8 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { TaskItems } from "@/components/task-items"
 import type { ITask } from "@/types/task"
-import { useEffect, useState } from "react"
 import { getTasks } from "@/config/api"
+import { useQuery } from "@tanstack/react-query"
 
 // const tasks: Task[] = [
 //   {
@@ -47,20 +47,13 @@ export function TaskList({
 }: {
   onTaskClick?: (task: ITask) => void
 }) {
-  const [tasks, setTasks] = useState<ITask[]>([])
 
-  const loadTasks = async () => {
-    try {
-      const tasks = await getTasks()
-      setTasks(tasks)
-    } catch (e) {
-      console.log("Error loading tasks", e)
-    }
-  }
+  const {data: tasks = [], isLoading} = useQuery({
+    queryKey: ['tasks'],
+    queryFn: getTasks
+  })
 
-  useEffect(() => {
-    loadTasks()
-  }, [])
+  if(isLoading) return <div>Loading...</div>
 
   return (
     <div className="rounded-2xl border border-border/50 bg-card p-5 shadow-sm">
